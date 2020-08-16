@@ -32,6 +32,8 @@ namespace NUnitTestProject1
         public const string LOGIN_UNSUCCESS = "Thông tin tài khoản hoặc mật khẩu không chính xác!";
         public const string ORDER_SUCCESS = "Đã thêm sản phẩm vào giỏ hàng";
         public const string UPDATE_CART = "Đã cập nhật giỏ hàng";
+        public const string DAU_TRU = "1";
+        public const string DAU_CONG = "2";
         [SetUp]
         public void SetUp()
         {
@@ -67,7 +69,6 @@ namespace NUnitTestProject1
             }
             driver.FindElement(By.LinkText("Đăng nhập")).Click();
         }
-        [Test]
         public void demo2(string _user, string _password)
         {
             driver.FindElement(By.CssSelector(".contact_form_title")).Click();
@@ -104,7 +105,6 @@ namespace NUnitTestProject1
             }
             driver.FindElement(By.CssSelector(".button")).Click();
         }
-        [Test]
         public void selectSizeProduct(string size)
         {
             string _elementSize = "(//input[@id=\'variantid\'])[" + size + "]";
@@ -125,11 +125,10 @@ namespace NUnitTestProject1
                 builder.MoveToElement(element).Release().Perform();
             }
         }
-        [Test]
         public void selectColor(string color)
         {
             string _elementColor = "(//input[@id=\'variantid\'])[" + color + "]";
-            driver.FindElement(By.XPath(_elementColor)).Click();           
+            driver.FindElement(By.XPath(_elementColor)).Click();
             {
                 var element = driver.FindElement(By.XPath(_elementColor));
                 Actions builder = new Actions(driver);
@@ -171,8 +170,8 @@ namespace NUnitTestProject1
             selectColor(COLOR_BLACK);
             driver.FindElement(By.Name("quantity")).Click();
             driver.FindElement(By.Name("quantity")).Clear();
-            driver.FindElement(By.Name("quantity")).SendKeys("8");          
-        }        
+            driver.FindElement(By.Name("quantity")).SendKeys("8");
+        }
         [Test]
         public void TC04()
         {
@@ -194,7 +193,9 @@ namespace NUnitTestProject1
         public void TC05()
         {
             driver.FindElement(By.LinkText("Giỏ hàng")).Click();
-            driver.FindElement(By.XPath("/html/body/div/div/div[1]/div/div/table/tbody/tr[3]/td[6]/strong/a[1]")).Click();
+            //dấu tăng giảm số lương giỏ hàng
+            var elementDau = "/html/body/div/div/div[1]/div/div/table/tbody/tr[3]/td[6]/strong/a[" + DAU_CONG + "]";
+            driver.FindElement(By.XPath(elementDau)).Click();
             driver.FindElement(By.CssSelector(".alert")).Click();
             {
                 string value = driver.FindElement(By.CssSelector(".alert")).Text;
@@ -212,13 +213,13 @@ namespace NUnitTestProject1
         {
             driver.FindElement(By.Id("bank")).Click();
             driver.FindElement(By.Id("contact_form_name")).Click();
-            driver.FindElement(By.Id("contact_form_name")).Clear();      
+            driver.FindElement(By.Id("contact_form_name")).Clear();
             driver.FindElement(By.Name("last_name")).Click();
-            driver.FindElement(By.Name("last_name")).Clear();         
+            driver.FindElement(By.Name("last_name")).Clear();
             driver.FindElement(By.Id("contact_form_phone")).Click();
             driver.FindElement(By.Id("contact_form_phone")).Clear();
             driver.FindElement(By.Id("bank")).Click();
-         //   driver.FindElement(By.Id("bank")).Clear();
+            //   driver.FindElement(By.Id("bank")).Clear();
             driver.FindElement(By.Id("bank1")).Click();
             driver.FindElement(By.Id("bank1")).Clear();
             driver.FindElement(By.Id("bank2")).Click();
@@ -230,7 +231,7 @@ namespace NUnitTestProject1
         [Test]
         public void TC08()
         {
-           // driver.FindElement(By.Id("bank")).Click();         
+            // driver.FindElement(By.Id("bank")).Click();         
             driver.FindElement(By.Name("first_name")).Click();
             driver.FindElement(By.Name("first_name")).Clear();
             driver.FindElement(By.Name("first_name")).SendKeys("Trần Khánh");
@@ -240,7 +241,7 @@ namespace NUnitTestProject1
             driver.FindElement(By.Id("contact_form_phone")).Click();
             driver.FindElement(By.Id("contact_form_phone")).Clear();
             driver.FindElement(By.Id("contact_form_phone")).SendKeys("0388174111");
-            driver.FindElement(By.Id("school")).Click();            
+            driver.FindElement(By.Id("school")).Click();
             driver.FindElement(By.Id("bank21")).Click();
             //driver.FindElement(By.Id("bank21")).Clear();            
             driver.FindElement(By.Id("bank22")).Click();
@@ -248,11 +249,12 @@ namespace NUnitTestProject1
             driver.FindElement(By.Id("bank23")).Click();
             //driver.FindElement(By.Id("bank23")).Clear();
             driver.FindElement(By.Name("total")).Click();
-            driver.FindElement(By.XPath("/html/body/div/div[1]/div[1]/div/div[2]/div/form/div[5]/button")).Click();
+            //Nút đặt hàng
+            //driver.FindElement(By.XPath("/html/body/div/div[1]/div[1]/div/div[2]/div/form/div[5]/button")).Click();
         }
         [Test]
         public void demo3()
-        {           
+        {
             TC01();
             TC02();
             TC03();
