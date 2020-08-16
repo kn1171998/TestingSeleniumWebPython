@@ -11,6 +11,8 @@ using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Interactions;
 using NUnit.Framework;
+using System.Runtime.CompilerServices;
+
 namespace NUnitTestProject1
 {
     [TestFixture]
@@ -19,6 +21,17 @@ namespace NUnitTestProject1
         private IWebDriver driver;
         public IDictionary<string, object> vars { get; private set; }
         private IJavaScriptExecutor js;
+        public const string SIZE_S = "1";
+        public const string SIZE_M = "2";
+        public const string SIZE_L = "3";
+        public const string SIZE_XL = "4";
+        public const string COLOR_MAROON = "5";
+        public const string COLOR_BLACK = "6";
+        public const string COLOR_BLUE = "7";
+        public const string COLOR_GRAY = "8";
+        public const string LOGIN_UNSUCCESS = "Thông tin tài khoản hoặc mật khẩu không chính xác!";
+        public const string ORDER_SUCCESS = "Đã thêm sản phẩm vào giỏ hàng";
+        public const string UPDATE_CART = "Đã cập nhật giỏ hàng";
         [SetUp]
         public void SetUp()
         {
@@ -32,8 +45,9 @@ namespace NUnitTestProject1
             driver.Quit();
         }
         [Test]
-        public void demo2()
+        public void demoSetupLogin()
         {
+
             driver.Navigate().GoToUrl("http://127.0.0.1:8000/");
             driver.Manage().Window.Size = new System.Drawing.Size(1382, 744);
             {
@@ -52,18 +66,22 @@ namespace NUnitTestProject1
                 builder.MoveToElement(element).Release().Perform();
             }
             driver.FindElement(By.LinkText("Đăng nhập")).Click();
+        }
+        [Test]
+        public void demo2(string _user, string _password)
+        {
             driver.FindElement(By.CssSelector(".contact_form_title")).Click();
-         
+
             driver.FindElement(By.Id("contact_form_name")).Click();
-            driver.FindElement(By.Id("contact_form_name")).SendKeys("admin");
+            driver.FindElement(By.Id("contact_form_name")).SendKeys(_user);
             driver.FindElement(By.Id("contact_form_name")).Click();
             {
                 string value = driver.FindElement(By.Id("contact_form_name")).GetAttribute("value");
-                Assert.That(value, Is.EqualTo("admin"));
+                Assert.That(value, Is.EqualTo(_user));
             }
-       
+
             driver.FindElement(By.Id("contact_form_email")).Click();
-            driver.FindElement(By.Id("contact_form_email")).SendKeys("admin");
+            driver.FindElement(By.Id("contact_form_email")).SendKeys(_password);
             {
                 var element = driver.FindElement(By.CssSelector(".button"));
                 Actions builder = new Actions(driver);
@@ -72,7 +90,7 @@ namespace NUnitTestProject1
             driver.FindElement(By.Id("contact_form_email")).Click();
             {
                 string value = driver.FindElement(By.Id("contact_form_email")).GetAttribute("value");
-                Assert.That(value, Is.EqualTo("admin"));
+                Assert.That(value, Is.EqualTo(_password));
             }
             {
                 var element = driver.FindElement(By.CssSelector(".button"));
@@ -85,47 +103,164 @@ namespace NUnitTestProject1
                 builder.MoveToElement(element).Release().Perform();
             }
             driver.FindElement(By.CssSelector(".button")).Click();
-            driver.FindElement(By.LinkText("Danh sách sản phẩm")).Click();
-            driver.FindElement(By.CssSelector(".product_item:nth-child(2) img")).Click();
-            driver.FindElement(By.XPath("(//input[@id=\'variantid\'])[2]")).Click();
+        }
+        [Test]
+        public void selectSizeProduct(string size)
+        {
+            string _elementSize = "(//input[@id=\'variantid\'])[" + size + "]";
+            driver.FindElement(By.XPath(_elementSize)).Click();
             {
-                var element = driver.FindElement(By.XPath("(//input[@id=\'variantid\'])[6]"));
+                var element = driver.FindElement(By.XPath(_elementSize));
                 Actions builder = new Actions(driver);
                 builder.MoveToElement(element).ClickAndHold().Perform();
             }
             {
-                var element = driver.FindElement(By.XPath("(//input[@id=\'variantid\'])[6]"));
+                var element = driver.FindElement(By.XPath(_elementSize));
                 Actions builder = new Actions(driver);
                 builder.MoveToElement(element).Perform();
             }
             {
-                var element = driver.FindElement(By.XPath("(//input[@id=\'variantid\'])[6]"));
+                var element = driver.FindElement(By.XPath(_elementSize));
                 Actions builder = new Actions(driver);
                 builder.MoveToElement(element).Release().Perform();
             }
-            driver.FindElement(By.XPath("(//input[@id=\'variantid\'])[6]")).Click();
-            // driver.FindElement(By.Name("quantity")).SendKeys("2");
-            driver.FindElement(By.Name("quantity")).Click();
+        }
+        [Test]
+        public void selectColor(string color)
+        {
+            string _elementColor = "(//input[@id=\'variantid\'])[" + color + "]";
+            driver.FindElement(By.XPath(_elementColor)).Click();           
             {
-                string value = driver.FindElement(By.Name("quantity")).GetAttribute("value");
-                Assert.That(value, Is.EqualTo("1"));
+                var element = driver.FindElement(By.XPath(_elementColor));
+                Actions builder = new Actions(driver);
+                builder.MoveToElement(element).ClickAndHold().Perform();
             }
+            {
+                var element = driver.FindElement(By.XPath(_elementColor));
+                Actions builder = new Actions(driver);
+                builder.MoveToElement(element).Perform();
+            }
+            {
+                var element = driver.FindElement(By.XPath(_elementColor));
+                Actions builder = new Actions(driver);
+                builder.MoveToElement(element).Release().Perform();
+            }
+        }
+        [Test]
+        public void TC01()
+        {
+            demo2("123", "123");
+            driver.FindElement(By.CssSelector(".alert:nth-child(2)")).Click();
+            {
+                string value = driver.FindElement(By.CssSelector(".alert:nth-child(2)")).Text;
+                Assert.That(value, Is.EqualTo(LOGIN_UNSUCCESS));
+            }
+        }
+        [Test]
+        public void TC02()
+        {
+            demo2("admin", "admin");
+            TC03();
+        }
+        [Test]
+        public void TC03()
+        {
+            driver.FindElement(By.LinkText("Danh sách sản phẩm")).Click();
+            driver.FindElement(By.CssSelector(".product_item:nth-child(2) img")).Click();
+            selectSizeProduct(SIZE_M);
+            selectColor(COLOR_BLACK);
+            driver.FindElement(By.Name("quantity")).Click();
+            driver.FindElement(By.Name("quantity")).Clear();
+            driver.FindElement(By.Name("quantity")).SendKeys("8");          
+        }        
+        [Test]
+        public void TC04()
+        {
+            driver.FindElement(By.LinkText("Danh sách sản phẩm")).Click();
+            driver.FindElement(By.CssSelector(".product_item:nth-child(2) img")).Click();
+            selectSizeProduct(SIZE_S);
+            selectColor(COLOR_MAROON);
+            driver.FindElement(By.Name("quantity")).Click();
+            driver.FindElement(By.Name("quantity")).Clear();
+            driver.FindElement(By.Name("quantity")).SendKeys("1");
             driver.FindElement(By.CssSelector(".button")).Click();
-            driver.FindElement(By.CssSelector(".single_product")).Click();
+            driver.FindElement(By.CssSelector(".alert")).Click();
+            {
+                string value = driver.FindElement(By.CssSelector(".alert")).Text;
+                Assert.That(value, Is.EqualTo(ORDER_SUCCESS));
+            }
+        }
+        [Test]
+        public void TC05()
+        {
+            driver.FindElement(By.LinkText("Giỏ hàng")).Click();
+            driver.FindElement(By.XPath("/html/body/div/div/div[1]/div/div/table/tbody/tr[3]/td[6]/strong/a[1]")).Click();
+            driver.FindElement(By.CssSelector(".alert")).Click();
+            {
+                string value = driver.FindElement(By.CssSelector(".alert")).Text;
+                Assert.That(value, Is.EqualTo(UPDATE_CART));
+            }
+        }
+        [Test]
+        public void TC06()
+        {
             driver.FindElement(By.LinkText("Giỏ hàng")).Click();
             driver.FindElement(By.CssSelector(".cart_button_checkout")).Click();
+        }
+        [Test]
+        public void TC07()
+        {
             driver.FindElement(By.Id("bank")).Click();
             driver.FindElement(By.Id("contact_form_name")).Click();
+            driver.FindElement(By.Id("contact_form_name")).Clear();      
             driver.FindElement(By.Name("last_name")).Click();
+            driver.FindElement(By.Name("last_name")).Clear();         
             driver.FindElement(By.Id("contact_form_phone")).Click();
-            driver.FindElement(By.Id("school")).Click();
+            driver.FindElement(By.Id("contact_form_phone")).Clear();
             driver.FindElement(By.Id("bank")).Click();
+         //   driver.FindElement(By.Id("bank")).Clear();
             driver.FindElement(By.Id("bank1")).Click();
+            driver.FindElement(By.Id("bank1")).Clear();
             driver.FindElement(By.Id("bank2")).Click();
+            driver.FindElement(By.Id("bank2")).Clear();
             driver.FindElement(By.Id("bank3")).Click();
-            driver.FindElement(By.Name("total")).Click();
+            driver.FindElement(By.Id("bank3")).Clear();
             driver.FindElement(By.CssSelector(".button")).Click();
-            driver.FindElement(By.CssSelector("h2:nth-child(3)")).Click();
+        }
+        [Test]
+        public void TC08()
+        {
+           // driver.FindElement(By.Id("bank")).Click();         
+            driver.FindElement(By.Name("first_name")).Click();
+            driver.FindElement(By.Name("first_name")).Clear();
+            driver.FindElement(By.Name("first_name")).SendKeys("Trần Khánh");
+            driver.FindElement(By.Name("last_name")).Click();
+            driver.FindElement(By.Name("last_name")).Clear();
+            driver.FindElement(By.Name("last_name")).SendKeys("Nhật");
+            driver.FindElement(By.Id("contact_form_phone")).Click();
+            driver.FindElement(By.Id("contact_form_phone")).Clear();
+            driver.FindElement(By.Id("contact_form_phone")).SendKeys("0388174111");
+            driver.FindElement(By.Id("school")).Click();            
+            driver.FindElement(By.Id("bank21")).Click();
+            //driver.FindElement(By.Id("bank21")).Clear();            
+            driver.FindElement(By.Id("bank22")).Click();
+            //driver.FindElement(By.Id("bank22")).Clear();
+            driver.FindElement(By.Id("bank23")).Click();
+            //driver.FindElement(By.Id("bank23")).Clear();
+            driver.FindElement(By.Name("total")).Click();
+            driver.FindElement(By.XPath("/html/body/div/div[1]/div[1]/div/div[2]/div/form/div[5]/button")).Click();
+        }
+        [Test]
+        public void demo3()
+        {           
+            TC01();
+            TC02();
+            TC03();
+            TC04();
+            TC05();
+            TC06();
+            TC07();
+            TC08();
         }
     }
 }

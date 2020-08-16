@@ -9,7 +9,13 @@ namespace ConsoleApp1
         {
             Demo2Test d = new Demo2Test();
             d.SetUp();
-            d.demo2();            
+            d.demoSetupLogin();
+            //Test Login UnSuccess
+            // d.demo2("123","123");
+           // d.TC01();
+            //Test Login Success
+            //d.demo2("admin", "admin");
+            d.demo3();
         }
     }
 }
